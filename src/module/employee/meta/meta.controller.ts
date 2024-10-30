@@ -1,7 +1,6 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MetaService } from './meta.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { IStaffingEmsEmployee } from '../../../model/employee/staffing.ems.employee.model';
 import { removeIdHelper } from '../../../helper/remove.id.helper';
 import { Types } from 'mongoose';
 import { IStaffingEmsEmployeeMeta } from '../../../model/employee/staffing.ems.employee.meta.model';
@@ -10,33 +9,44 @@ import { IStaffingEmsEmployeeMeta } from '../../../model/employee/staffing.ems.e
 export class MetaController {
   constructor(private readonly metaService: MetaService) {}
 
+  /**
+   * @param data
+   * @constructor
+   * @description
+   * Fungsi Untuk melakukan Message pattern pada Micro service
+   */
   @MessagePattern('staffing.ems.employee.meta.create')
   async CreateNewData(@Payload() data: IStaffingEmsEmployeeMeta) {
-    return this.metaService
-      .Create(data)
-      .then((response) => {
-        //###########################################################
-        if (response === null)
-          return { status: false, code: 409, msg: `Failed To Create Data` };
-        //###########################################################
-        return {
-          status: true,
-          code: HttpStatus.CREATED,
-          msg: `Data Successfully Created`,
-          data: response,
-        };
-        //###########################################################
-      })
-      .catch((error) => {
-        //###########################################################
-        return {
-          status: false,
-          code: HttpStatus.BAD_GATEWAY,
-          msg: `Internal Server Error`,
-          error: error,
-        };
-        //###########################################################
-      });
+    /** lakukan Pengembalian data dari services **/
+    return (
+      this.metaService
+        /** Create Action Data **/
+        .Create(data)
+        /** Response data result **/
+        .then((response) => {
+          //###########################################################
+          if (response === null)
+            return { status: false, code: 409, msg: `Failed To Create Data` };
+          //###########################################################
+          return {
+            status: true,
+            code: HttpStatus.CREATED,
+            msg: `Data Successfully Created`,
+            data: response,
+          };
+          //###########################################################
+        })
+        .catch((error) => {
+          //###########################################################
+          return {
+            status: false,
+            code: HttpStatus.BAD_GATEWAY,
+            msg: `Internal Server Error`,
+            error: error,
+          };
+          //###########################################################
+        })
+    );
   }
 
   @MessagePattern('staffing.ems.employee.meta.read.all')
