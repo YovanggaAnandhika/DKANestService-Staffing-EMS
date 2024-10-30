@@ -1,12 +1,10 @@
-name: <your-project-name>
+name: dka-microservices-staffing-ems
 
 services:
   app:
     image: node:alpine
-    profiles:
-      - app
-    container_name: <your-container-name>
-    hostname: <your-container-hostname-name>
+    container_name: dka-microservices-staffing-ems-app
+    hostname: ems.staffing.services.dkaapis.com
     working_dir: /home/app
     logging:
       driver: local
@@ -15,6 +13,13 @@ services:
         max-file: 10
     environment:
       NODE_ENV: development
+      DKA_DB_MONGO_HOST: server.dkaapis.com
+      DKA_DB_MONGO_USERNAME: developer
+      DKA_DB_MONGO_PASSWORD: Cyberhack2010
+      ##-----------------------------------------------------
+      DKA_HOST_ACCOUNT_SERVICE: account.services.dkaapis.com
+      DKA_PORT_ACCOUNT_SERVICE: 80
+      ##-----------------------------------------------------
     deploy:
       resources:
         limits:
@@ -26,9 +31,19 @@ services:
       - type: bind
         source: .
         target: /home/app
+      - type: bind
+        source: ./../../node_modules
+        target: /home/app/node_modules
+      - type: bind
+        source: ./.config
+        target: /home/.config
+      - type: bind
+        source: ./../../yarn.lock
+        target: /home/app/yarn.lock
     command: yarn run start
     networks:
       - default
+      - dka-microservice-external
 
   mongo:
     image: mongo:latest
@@ -69,6 +84,7 @@ services:
     command: mongod --config /etc/mongod.conf
     networks:
       - default
+      - dka-microservice-external
 
 volumes:
   mongodb-data:
@@ -79,3 +95,5 @@ volumes:
 networks:
   default:
     driver: bridge
+  dka-microservice-external:
+    external: true

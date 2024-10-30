@@ -4,92 +4,98 @@ import { AccountClientFactory } from '../../config/client.factory.config';
 import { firstValueFrom } from 'rxjs';
 import * as moment from 'moment';
 import { StaffingEmsEmployeeModel } from './staffing.ems.employee.schema';
+import { IStaffingEmsEmployeeMeta } from '../../model/employee/staffing.ems.employee.meta.model';
 
-export const StaffingEmsEmployeeMetaSchema = new mongoose.Schema(
-  {
-    /**
-     * Reference to another account, should be a valid ObjectId.
-     */
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      validate: {
-        validator: async function (accountId) {
-          /** Checked Id Reference match to microservice user **/
-          const client = ClientProxyFactory.create(AccountClientFactory);
-          const result = await firstValueFrom(
-            client.send('user.read.search.one.by.id', { _id: accountId }),
-          );
-          return result.status;
+export const StaffingEmsEmployeeMetaSchema =
+  new mongoose.Schema<IStaffingEmsEmployeeMeta>(
+    {
+      /**
+       * Reference to another account, should be a valid ObjectId.
+       */
+      reference: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: {
+          validator: async function (accountId) {
+            /** Checked Id Reference match to microservice user **/
+            const client = ClientProxyFactory.create(AccountClientFactory);
+            const result = await firstValueFrom(
+              client.send('user.read.search.one.by.id', { _id: accountId }),
+            );
+            return result.status;
+          },
+          message: 'Account Reference Not Exist',
         },
-        message: 'Account Reference Not Exist',
       },
-    },
-    /**
-     * Reference to another account, should be a valid ObjectId.
-     */
-    parent: {
-      type: mongoose.Schema.Types.ObjectId,
-      validate: {
-        validator: async function (value) {
-          /** Checked Id Reference match to microservice user **/
-          return !!(await this.model(StaffingEmsEmployeeModel.modelName).exists(
-            {
+      /**
+       * Reference to another account, should be a valid ObjectId.
+       */
+      parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        validate: {
+          validator: async function (value) {
+            /** Checked Id Reference match to microservice user **/
+            return !!(await this.model(
+              StaffingEmsEmployeeModel.modelName,
+            ).exists({
               _id: value,
-            },
-          ));
+            }));
+          },
+          message: 'Parent Employee Data Not Exists',
         },
-        message: 'Parent Employee Data Not Exists',
-      },
-    },
-    /**
-     * Time of creation.
-     */
-    time_created: {
-      /**
-       * Human-readable time of creation.
-       */
-      humanize: {
-        type: mongoose.Schema.Types.String,
-        default: moment(moment.now()).format('HH:mm:ss DD-MM-YYYY'),
       },
       /**
-       * Unix timestamp of creation.
+       * Time of creation.
        */
-      unix: {
-        type: mongoose.Schema.Types.Number,
-        default: moment(moment.now()).unix(),
+      time_created: {
+        /**
+         * Human-readable time of creation.
+         */
+        humanize: {
+          type: mongoose.Schema.Types.String,
+          default: moment(moment.now()).format('HH:mm:ss DD-MM-YYYY'),
+        },
+        /**
+         * Unix timestamp of creation.
+         */
+        unix: {
+          type: mongoose.Schema.Types.Number,
+          default: moment(moment.now()).unix(),
+        },
       },
-    },
-    /**
-     * Time of update.
-     */
-    time_updated: {
       /**
-       * Human-readable time of update.
+       * Time of update.
        */
-      humanize: {
-        type: mongoose.Schema.Types.String,
-        default: moment(moment.now()).format('HH:mm:ss DD-MM-YYYY'),
+      time_updated: {
+        /**
+         * Human-readable time of update.
+         */
+        humanize: {
+          type: mongoose.Schema.Types.String,
+          default: moment(moment.now()).format('HH:mm:ss DD-MM-YYYY'),
+        },
+        /**
+         * Unix timestamp of update.
+         */
+        unix: {
+          type: mongoose.Schema.Types.Number,
+          default: moment(moment.now()).unix(),
+        },
       },
       /**
-       * Unix timestamp of update.
+       * Status of the account (true or false).
        */
-      unix: {
-        type: mongoose.Schema.Types.Number,
-        default: moment(moment.now()).unix(),
+      status: {
+        type: mongoose.Schema.Types.Boolean,
+        default: true,
       },
     },
-    /**
-     * Status of the account (true or false).
-     */
-    status: {
-      type: mongoose.Schema.Types.Boolean,
-      default: true,
+    {
+      collection: 'staffing_ems_employee_meta',
+      versionKey: false,
+      strict: true,
     },
-  },
-  { collection: 'staffing_ems_employee_meta', versionKey: false, strict: true },
-);
+  );
 
 export const StaffingEmsEmployeeMetaModel = mongoose.model(
   'staffing_ems_employee_meta',
