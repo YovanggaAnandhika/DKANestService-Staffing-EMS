@@ -40,7 +40,7 @@ services:
       - type: bind
         source: ./../../yarn.lock
         target: /home/app/yarn.lock
-    command: yarn run start
+    command: yarn run start:dev
     networks:
       - default
       - dka-microservice-external

@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import StaffingEmsDepartmentSchema, {
   StaffingEmsDepartmentModel,
 } from '../../schema/department/staffing.ems.department.schema';
+import { AccountClient } from '../../config/client.module.config';
 
 @Module({
   imports: [
+    AccountClient,
     DatabaseConnectionConfig_2,
     MongooseModule.forFeature(
       [

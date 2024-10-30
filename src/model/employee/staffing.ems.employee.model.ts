@@ -7,6 +7,7 @@ export interface IStaffingEmsEmployeeTime {
 
 export interface IStaffingEmsEmployee extends Document {
   reference: mongoose.Schema.Types.ObjectId;
+  meta: mongoose.Schema.Types.ObjectId;
   time_created: IStaffingEmsEmployeeTime;
   time_updated: IStaffingEmsEmployeeTime;
   status: mongoose.Schema.Types.Boolean;

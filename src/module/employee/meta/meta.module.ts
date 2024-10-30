@@ -7,9 +7,11 @@ import {
   StaffingEmsEmployeeMetaSchema,
 } from '../../../schema/employee/staffing.ems.employee.meta.schema';
 import { DatabaseConnectionConfig_1 } from '../../../config/database.connection.config';
+import { AccountClient } from '../../../config/client.module.config';
 
 @Module({
   imports: [
+    AccountClient,
     DatabaseConnectionConfig_1,
     MongooseModule.forFeature(
       [

@@ -4,6 +4,7 @@ import { ClientProxyFactory } from '@nestjs/microservices';
 import { AccountClientFactory } from '../../config/client.factory.config';
 import { firstValueFrom } from 'rxjs';
 import { IStaffingEmsEmployee } from '../../model/employee/staffing.ems.employee.model';
+import { StaffingEmsEmployeeMetaModel } from './staffing.ems.employee.meta.schema';
 
 export const StaffingEmsEmployeeSchema =
   new mongoose.Schema<IStaffingEmsEmployee>(
@@ -24,6 +25,20 @@ export const StaffingEmsEmployeeSchema =
             return result.status;
           },
           message: 'Account Reference Not Exist',
+        },
+      },
+      meta: {
+        type: mongoose.Schema.Types.ObjectId,
+        validate: {
+          validator: async function (value) {
+            /** Checked Id Reference match to microservice user **/
+            return !!(await this.model(
+              StaffingEmsEmployeeMetaModel.modelName,
+            ).exists({
+              _id: value,
+            }));
+          },
+          message: 'Meta Employee Data Not Exists',
         },
       },
       /**
