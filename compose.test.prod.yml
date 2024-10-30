@@ -1,0 +1,73 @@
+name: <your-project-name>
+
+services:
+  app:
+    build:
+      context: .
+    container_name: <your-container-name>
+    hostname: <your-container-hostname-name>
+    working_dir: /home/app
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: 10
+    environment:
+      NODE_ENV: development
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+        reservations:
+          memory: 500M
+    restart: always
+    volumes:
+      - type: bind
+        source: .
+        target: /home/app
+    command: yarn run start
+    networks:
+      - default
+
+  mongo:
+    image: mongo:latest
+    container_name: <your-container-name>
+    hostname: <your-container-hostname-name>
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: <username>
+      MONGO_INITDB_ROOT_PASSWORD: <password>
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 300M
+        reservations:
+          cpus: '0.25'
+          memory: 100M
+    restart: always
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        host_ip: 0.0.0.0
+    volumes:
+      - type: volume
+        source: mongodb-data
+        target: /data/db
+      - type: bind
+        source: ./.config/mongo/mongod.conf
+        target: /etc/mongod.conf
+        read_only: true
+    command: mongod --config /etc/mongod.conf
+    networks:
+      - default
+
+volumes:
+  mongodb-data:
+    driver: local
+  dka-ssl-data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge

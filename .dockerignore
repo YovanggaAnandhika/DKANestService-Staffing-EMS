@@ -1,0 +1,8 @@
+node_modules
+dist
+.config/cert
+Dockerfile
+compose.yml
+compose.test.prod.yml
+compose.prod.yml
+yarn.lock
