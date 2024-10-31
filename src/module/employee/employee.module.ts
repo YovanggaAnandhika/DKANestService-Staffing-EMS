@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { EmployeeController } from './employee.controller';
-import { DatabaseConnectionConfig_0 } from '../../config/database.connection.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import StaffingEmsEmployeeSchema, {
   StaffingEmsEmployeeModel,
@@ -15,20 +14,27 @@ import StaffingEmsEmployeeMetaSchema, {
 @Module({
   imports: [
     AccountClient,
-    DatabaseConnectionConfig_0,
-    MongooseModule.forFeature(
-      [
-        {
-          schema: StaffingEmsEmployeeSchema,
-          name: StaffingEmsEmployeeModel.modelName,
+    MongooseModule.forRoot(
+      `mongodb://${process.env.DKA_DB_MONGO_HOST || 'localhost'}`,
+      {
+        noDelay: true,
+        auth: {
+          username: `${process.env.DKA_DB_MONGO_USERNAME || 'root'}`,
+          password: `${process.env.DKA_DB_MONGO_PASSWORD || '123456'}`,
         },
-        {
-          schema: StaffingEmsEmployeeMetaSchema,
-          name: StaffingEmsEmployeeMetaModel.modelName,
-        },
-      ],
-      'CONN_0',
+        dbName: `${process.env.DKA_DB_MONGO_DATABASE || 'staffing-ems'}`,
+      },
     ),
+    MongooseModule.forFeature([
+      {
+        schema: StaffingEmsEmployeeSchema,
+        name: StaffingEmsEmployeeModel.modelName,
+      },
+      {
+        schema: StaffingEmsEmployeeMetaSchema,
+        name: StaffingEmsEmployeeMetaModel.modelName,
+      },
+    ]),
     MetaModule,
   ],
   controllers: [EmployeeController],

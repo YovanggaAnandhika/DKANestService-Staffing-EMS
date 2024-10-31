@@ -1,4 +1,4 @@
-import { Controller, HttpStatus } from '@nestjs/common';
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { Types } from 'mongoose';
 import { IStaffingEmsEmployee } from '../../model/employee/staffing.ems.employee.model';
@@ -7,6 +7,7 @@ import { removeIdHelper } from '../../helper/remove.id.helper';
 
 @Controller()
 export class EmployeeController {
+  private readonly logger = new Logger(EmployeeController.name);
   constructor(private readonly employeeService: EmployeeService) {}
 
   @MessagePattern('staffing.ems.employee.create')

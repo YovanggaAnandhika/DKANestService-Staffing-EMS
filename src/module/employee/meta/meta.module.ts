@@ -6,22 +6,28 @@ import {
   StaffingEmsEmployeeMetaModel,
   StaffingEmsEmployeeMetaSchema,
 } from '../../../schema/employee/staffing.ems.employee.meta.schema';
-import { DatabaseConnectionConfig_1 } from '../../../config/database.connection.config';
 import { AccountClient } from '../../../config/client.module.config';
 
 @Module({
   imports: [
     AccountClient,
-    DatabaseConnectionConfig_1,
-    MongooseModule.forFeature(
-      [
-        {
-          schema: StaffingEmsEmployeeMetaSchema,
-          name: StaffingEmsEmployeeMetaModel.modelName,
+    MongooseModule.forRoot(
+      `mongodb://${process.env.DKA_DB_MONGO_HOST || 'localhost'}`,
+      {
+        noDelay: true,
+        auth: {
+          username: `${process.env.DKA_DB_MONGO_USERNAME || 'root'}`,
+          password: `${process.env.DKA_DB_MONGO_PASSWORD || '123456'}`,
         },
-      ],
-      'CONN_1',
+        dbName: `${process.env.DKA_DB_MONGO_DATABASE || 'staffing-ems'}`,
+      },
     ),
+    MongooseModule.forFeature([
+      {
+        schema: StaffingEmsEmployeeMetaSchema,
+        name: StaffingEmsEmployeeMetaModel.modelName,
+      },
+    ]),
   ],
   controllers: [MetaController],
   providers: [MetaService],

@@ -9,9 +9,9 @@ import { StaffingEmsEmployeeMetaModel } from '../../schema/employee/staffing.ems
 @Injectable()
 export class EmployeeService {
   private readonly logger: Logger = new Logger(EmployeeService.name);
-  @InjectConnection('CONN_0')
+  @InjectConnection()
   private readonly connection: mongoose.Connection;
-  @InjectModel(StaffingEmsEmployeeModel.modelName, 'CONN_0')
+  @InjectModel(StaffingEmsEmployeeModel.modelName)
   private readonly db: Model<IStaffingEmsEmployee>;
   @Inject('DKA_ACCOUNT')
   private readonly account: ClientProxy;
@@ -28,7 +28,6 @@ export class EmployeeService {
         /** set variable **/
         const arrayUpdates = [];
         /** checked action Resolution **/
-        this.logger.verbose(result);
         if (result.meta !== undefined) {
           arrayUpdates.push(
             this.connection

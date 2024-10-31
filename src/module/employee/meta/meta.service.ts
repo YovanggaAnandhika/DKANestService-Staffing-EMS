@@ -8,9 +8,9 @@ import { IStaffingEmsEmployeeMeta } from '../../../model/employee/staffing.ems.e
 @Injectable()
 export class MetaService {
   private readonly logger: Logger = new Logger(MetaService.name);
-  @InjectConnection('CONN_1')
+  @InjectConnection()
   private readonly connection: mongoose.Connection;
-  @InjectModel(StaffingEmsEmployeeMetaModel.modelName, 'CONN_1')
+  @InjectModel(StaffingEmsEmployeeMetaModel.modelName)
   private readonly db: Model<IStaffingEmsEmployeeMeta>;
   @Inject('DKA_ACCOUNT')
   private readonly account: ClientProxy;

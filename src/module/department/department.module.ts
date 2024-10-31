@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 import { DepartmentController } from './department.controller';
-import { DatabaseConnectionConfig_2 } from '../../config/database.connection.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import StaffingEmsDepartmentSchema, {
   StaffingEmsDepartmentModel,
@@ -11,16 +10,23 @@ import { AccountClient } from '../../config/client.module.config';
 @Module({
   imports: [
     AccountClient,
-    DatabaseConnectionConfig_2,
-    MongooseModule.forFeature(
-      [
-        {
-          schema: StaffingEmsDepartmentSchema,
-          name: StaffingEmsDepartmentModel.modelName,
+    MongooseModule.forRoot(
+      `mongodb://${process.env.DKA_DB_MONGO_HOST || 'localhost'}`,
+      {
+        noDelay: true,
+        auth: {
+          username: `${process.env.DKA_DB_MONGO_USERNAME || 'root'}`,
+          password: `${process.env.DKA_DB_MONGO_PASSWORD || '123456'}`,
         },
-      ],
-      'CONN_2',
+        dbName: `${process.env.DKA_DB_MONGO_DATABASE || 'staffing-ems'}`,
+      },
     ),
+    MongooseModule.forFeature([
+      {
+        schema: StaffingEmsDepartmentSchema,
+        name: StaffingEmsDepartmentModel.modelName,
+      },
+    ]),
   ],
   controllers: [DepartmentController],
   providers: [DepartmentService],
