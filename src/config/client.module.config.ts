@@ -1,8 +1,7 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as fs from 'node:fs';
-import { DynamicModule } from '@nestjs/common';
+import { DynamicModule, Logger } from '@nestjs/common';
 import { ConnectionOptions } from 'tls';
-import { Logger } from '@nestjs/common';
 
 const logger: Logger = new Logger(`ClientModuleConfig`);
 let TLSOptions: ConnectionOptions | undefined = undefined;
